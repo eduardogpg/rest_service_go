@@ -14,12 +14,7 @@ import (
 )
 
 func AddNewUser(w http.ResponseWriter, r *http.Request){
-	decoder := json.NewDecoder(r.Body)
-    var user stc.UserRequest   
-    err := decoder.Decode(&user)
-   	if err != nil {
-       	panic("Is not possible read the JSON request")
-   	}
+	user := ReadJsonRequest(r)
 
 	errors := stc.Errors{}
 	status := v.Success
@@ -32,43 +27,13 @@ func AddNewUser(w http.ResponseWriter, r *http.Request){
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, params martini.Params){
-	user_id := params["user_id"]
-	user_name := params["user_name"]
-
-	errors := stc.Errors{}
-	status, error := IsNumber(user_id)
-	if status == v.Success{
-		if connect.UpdateUser(user_id, user_name) != true{
-			status = v.Error
-	     	errors = append(errors, stc.Error{ Body: "Is not possible update the user"})
-		}
-	}else{
-		errors = append(errors, error)
-	}
-	response := stc.Result { Status: status, Data: stc.Users{} ,Errors : errors}
+	response := CommonUpdate(params["user_id"], params["user_name"])
 	json.NewEncoder(w).Encode(response)
 }
 
 func UpdateUserJson(w http.ResponseWriter, r *http.Request){
-	decoder := json.NewDecoder(r.Body)
-	log.Println(r.Body)
-    var user stc.UserRequest   
-    err := decoder.Decode(&user)
-   	if err != nil {
-       	panic("Is not possible read the JSON request")
-   	}
-	errors := stc.Errors{}
-	log.Println(user.User_Id)
-	status, error := IsNumber(user.User_Id)
-	if status == v.Success{
-		if connect.UpdateUser(user.User_Id, user.User_Name) != true{
-			status = v.Error
-	     	errors = append(errors, stc.Error{ Body: "Is not possible update the user"})
-		}
-	}else{
-		errors = append(errors, error)
-	}
-	response := stc.Result { Status: status, Data: stc.Users{} ,Errors : errors}
+	user := ReadJsonRequest(r)
+	response := CommonUpdate(user.User_Id, user.User_Name)
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -104,7 +69,6 @@ func GetUser(w http.ResponseWriter, r *http.Request, params martini.Params){
 	}
 	response := stc.Result { Status : status, Data: data ,Errors : errors}
    	json.NewEncoder(w).Encode(response)
-
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
@@ -121,4 +85,29 @@ func IsNumber(number string) (status int, error stc.Error) {
         return v.Error, stc.Error{ Body: "The param is not a number"}
     }
 	return v.Success, stc.Error{}
+}
+
+func ReadJsonRequest(request *http.Request) stc.UserRequest {
+	decoder := json.NewDecoder(request.Body)
+    var user stc.UserRequest   
+    err := decoder.Decode(&user)
+   	if err != nil {
+       	panic("Is not possible read the JSON request")
+   	}
+   	return user
+}
+
+func CommonUpdate(user_id, user_name string) stc.Result{
+	errors := stc.Errors{}
+	log.Println(user_id)
+	status, error := IsNumber(user_id)
+	if status == v.Success{
+		if connect.UpdateUser(user_id, user_name) != true{
+			status = v.Error
+	     	errors = append(errors, stc.Error{ Body: "Is not possible update the user"})
+		}
+	}else{
+		errors = append(errors, error)
+	}
+	return stc.Result { Status: status, Data: stc.Users{} ,Errors : errors}
 }

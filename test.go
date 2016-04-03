@@ -9,7 +9,7 @@ func main() {
 	url := "http://127.0.0.1:8000/new/user/"
     fmt.Println("URL:>", url)
 
-    var jsonStr = []byte(`{"user_name":"Eduardo Ismael Garcìa Pèrez"}`)
+    var jsonStr = []byte(`{ "user_name":"Perrito"}`)
 
     req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
     req.Header.Set("X-Custom-Header", "myvalue")
