@@ -4,6 +4,7 @@ import(
 	"log"
 	"database/sql"
 	"fmt"
+	"os"
 
 	stc "../structures"
 )
@@ -17,6 +18,11 @@ var username string = "root"
 
 func InitializeUnSafeDB(){
 	db = connect_db(GetConnectionDB(""))
+	ChekConnection()
+}
+
+func InitializeSafeDB(environment_password string){
+	db = connect_db(GetConnectionDB(os.Getenv(environment_password)))
 	ChekConnection()
 }
 
@@ -77,6 +83,28 @@ func GetUser(user_id string) stc.Users{
 		allUsers = append(allUsers, user)  
     }
 	return allUsers
+}
+
+func DeleteUser(user_id string) bool{
+    sentence := fmt.Sprintf("DELETE FROM users WHERE Id = %s", user_id)
+    _ , error := db.Query(sentence)
+    fmt.Println(sentence)
+
+    if error != nil{
+    	return false
+    }
+    return true;
+}
+
+func UpdateUser(user_id, user_name string) bool{
+    sentence := fmt.Sprintf("UPDATE users SET user_name = '%s' WHERE Id = %s", user_name, user_id)
+    _ , error := db.Query(sentence)
+    fmt.Println(sentence)
+    
+    if error != nil{
+    	return false
+    }
+    return true;
 }
 
 func ChekConnection(){

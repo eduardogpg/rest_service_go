@@ -36,13 +36,11 @@ func main() {
 
 	})
 
-	m.Get("/users/:user_id", func(w http.ResponseWriter, r *http.Request, params martini.Params){	
+	m.Get("/user/:user_id", func(w http.ResponseWriter, r *http.Request, params martini.Params){	
 		user_id := params["user_id"]
 		errors := stc.Errors{}
 		data := stc.Users{}
-		
 		status, error := IsNumber(user_id)
-
 		if status == v.Success{
 			data = h.GetUser(user_id)
 			if (len(data) == 0){
@@ -52,8 +50,43 @@ func main() {
 		}else{
 			errors = append(errors, error)
 		}
-
 		response := stc.Result { Status : status, Data: data ,Errors : errors}
+    	json.NewEncoder(w).Encode(response)
+
+	})
+
+	m.Get("/delete/user/:user_id", func(w http.ResponseWriter, r *http.Request, params martini.Params){	
+		user_id := params["user_id"]
+		errors := stc.Errors{}
+		status, error := IsNumber(user_id)
+		if status == v.Success{
+			if h.DeleteUser(user_id) != true{
+				status = v.Error
+        		errors = append(errors, stc.Error{ Body: "Is not possible delete the user"})
+			}
+		}else{
+			errors = append(errors, error)
+		}
+		response := stc.Result { Status: status, Data: stc.Users{} ,Errors : errors}
+    	json.NewEncoder(w).Encode(response)
+
+	})
+
+	m.Get("/update/user/:user_id/:user_name", func(w http.ResponseWriter, r *http.Request, params martini.Params){	
+		user_id := params["user_id"]
+		user_name := params["user_name"]
+
+		errors := stc.Errors{}
+		status, error := IsNumber(user_id)
+		if status == v.Success{
+			if h.UpdateUser(user_id, user_name) != true{
+				status = v.Error
+        		errors = append(errors, stc.Error{ Body: "Is not possible update the user"})
+			}
+		}else{
+			errors = append(errors, error)
+		}
+		response := stc.Result { Status: status, Data: stc.Users{} ,Errors : errors}
     	json.NewEncoder(w).Encode(response)
 
 	})
