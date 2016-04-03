@@ -28,7 +28,7 @@ func main() {
 
 	m.Get("/users/", func(w http.ResponseWriter, r *http.Request) {	
 		erros := stc.Errors{}			
-		data := stc.Users{}
+		data := h .GetAllUser()
 
 		response := stc.Result { Status : v.Success, Data : data, Errors : erros}
     	json.NewEncoder(w).Encode(response)
