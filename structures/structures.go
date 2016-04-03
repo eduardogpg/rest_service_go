@@ -1,6 +1,16 @@
 package structures
 
 
+type User struct {
+    User_Id 	string  `json:"user_id"` 
+    Created_At  string  `json:"created_at"`
+    Update_At   string	`json:"update_at"`
+    User_Name 	string  `json:"user_name"`
+}
+
+type Users []User
+
+
 type Error struct {
     Number 	int		`json:"number"`
     Body 	string 	`json:"Body"`
