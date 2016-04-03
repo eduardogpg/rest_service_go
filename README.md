@@ -3,7 +3,7 @@
 
 ### Run
 
-You need Gulp installed globally:
+Just execute the nex command:
 
 ```sh
 $ go run server.go
@@ -11,7 +11,7 @@ $ go run server.go
 
 ### Test
 
-You need Gulp installed globally:
+Just execute the nex command:
 
 ```sh
 $ go run test.go
