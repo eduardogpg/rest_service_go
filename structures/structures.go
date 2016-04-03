@@ -12,7 +12,6 @@ type Users []User
 
 
 type Error struct {
-    Number 	int		`json:"number"`
     Body 	string 	`json:"Body"`
 
 }
