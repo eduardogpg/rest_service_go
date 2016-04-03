@@ -1,11 +1,13 @@
-package handler
+package connect
 
 import(
 	"log"
 	"database/sql"
 	"fmt"
 	"os"
-
+    "time"
+    "strings"
+    
 	stc "../structures"
 )
 
@@ -89,7 +91,6 @@ func DeleteUser(user_id string) bool{
     sentence := fmt.Sprintf("DELETE FROM users WHERE Id = %s", user_id)
     _ , error := db.Query(sentence)
     fmt.Println(sentence)
-
     if error != nil{
     	return false
     }
@@ -100,9 +101,19 @@ func UpdateUser(user_id, user_name string) bool{
     sentence := fmt.Sprintf("UPDATE users SET user_name = '%s' WHERE Id = %s", user_name, user_id)
     _ , error := db.Query(sentence)
     fmt.Println(sentence)
-    
     if error != nil{
     	return false
+    }
+    return true;
+}
+
+func AddUser(user_name string) bool{
+    now := GetFormanNow()
+    sentence := fmt.Sprintf("INSERT into users (user_name, created_at, update_at) VALUES ('%s', '%s', '%s')", user_name, now, now)
+    _ , error := db.Query(sentence)
+    fmt.Println(sentence)
+    if error != nil{
+        return false
     }
     return true;
 }
@@ -112,6 +123,10 @@ func ChekConnection(){
 	if(err != nil){
 		log.Fatal(err)
 	}
+}
+
+func GetFormanNow() string{
+    return strings.Split(time.Now().String(), " -")[0]
 }
 
 func CloseConnection(){

@@ -8,6 +8,11 @@ type User struct {
     User_Name 	string  `json:"user_name"`
 }
 
+type UserRequest struct{
+	User_Id 	string  `json:"user_id"` 
+	User_Name 	string  `json:"user_name"`	
+}
+
 type Users []User
 
 
